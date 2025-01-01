@@ -1,14 +1,12 @@
-# main.py
-
 import pygame
 import sys
 from map_gen import generate_cave
-from ant import Ant, WorkerAnt, SoldierAnt  # Import the new classes
+from ant import Ant, WorkerAnt, SoldierAnt  
 import random
 import cupy as cp
-import noise  # Ensure you have the 'noise' library installed
-import numpy as np  # Added import for NumPy
-from numba import njit  # Added import for Numba
+import noise 
+import numpy as np  
+from numba import njit  
 
 # Define some colors
 DARK_BROWN = (87, 47, 13)
