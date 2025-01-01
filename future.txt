@@ -1,0 +1,4 @@
+Soldier ants:
+- Kill and deposit worker ants
+- If a soldier encounters another soldier, they "gamble" to see who wins based off a parameter
+- Their fighting chance parameter will have an inverse relationship with their speed parameter
