@@ -42,14 +42,11 @@ def main():
     height = 80
     cell_size = 11
 
-    # Number of colonies and resources
-    num_colonies = 4  # Set the number of colonies here
-    num_resources = 16  # Set the number of resources here
+    num_colonies = 4  
+    num_resources = 16  
 
-    # Simulation speed factor
-    simulation_speed = 5.0  # Adjust this value to change the speed
+    simulation_speed = 5.0 
 
-    # Screen dimensions
     screen_width = width * cell_size
     screen_height = height * cell_size
 
@@ -64,7 +61,7 @@ def main():
     )
 
     # Create noise maps for terrain colors
-    scale = 11.0  # Adjust the scale for zooming in/out of the noise texture
+    scale = 11.0  
     seed = random.randint(0, 100)
 
     # First noise map for color variations
@@ -127,7 +124,6 @@ def main():
         for row in material_noise_map
     ]
 
-    # Convert material_noise_map to NumPy array
     material_noise_map = np.array(material_noise_map, dtype=np.float32)
 
     # Define colors for grey (stone) and brown (soil)
@@ -146,11 +142,11 @@ def main():
                 # Determine if the wall is grey or brown based on material noise
                 material_value = material_noise_map[y, x]
                 if material_value > 0.5:
-                    base_color = GREY  # Wall is grey (stone)
+                    base_color = GREY  
                 else:
-                    base_color = BROWN  # Wall is brown (soil)
+                    base_color = BROWN  
             else:
-                base_color = DARK_BROWN  # Floor is always dark brown
+                base_color = DARK_BROWN 
 
             # Apply noise-based variation to the color
             noise_value = noise_map[y, x]
@@ -175,7 +171,6 @@ def main():
 
     colony_colors = generate_unique_colors(num_colonies)
 
-    # Assign IDs, colors, and parameters to colonies
     for idx, colony in enumerate(colony_positions):
         colony['id'] = idx
         colony['color'] = colony_colors[idx]
@@ -186,12 +181,12 @@ def main():
             'can_steal': random.choice([True, False]),
             'resources_stolen': 0
         }
-        colony['resources_returned'] = 2  # Initialize resource counter
-        colony['ants_captured'] = 0  # Initialize ants captured counter
-        colony['ants'] = []  # Initialize the list of ants for the colony
-        colony['worker_ratio'] = random.uniform(0.5, 0.9)  # Worker-to-soldier ratio
+        colony['resources_returned'] = 2
+        colony['ants_captured'] = 0  
+        colony['ants'] = [] 
+        colony['worker_ratio'] = random.uniform(0.5, 0.9)  # Worker:Soldier ratio
         # Set a default value for colony size or initial ant count
-        colony['value'] = 1  # For example, 1 unit of colony size
+        colony['value'] = 1 
 
     # Initialize pheromone maps for each colony as NumPy arrays
     pheromone_maps = []
@@ -216,7 +211,7 @@ def main():
                 speed=simulation_speed
             )
             ants.append(ant)
-            colony['ants'].append(ant)  # Add the ant to the colony's list of ants
+            colony['ants'].append(ant)
         for _ in range(num_soldiers):
             ant_x = x + size / 2
             ant_y = y + size / 2
@@ -228,7 +223,7 @@ def main():
                 ants=ants  # Pass the global ants list to the SoldierAnt
             )
             ants.append(ant)
-            colony['ants'].append(ant)  # Add the ant to the colony's list of ants
+            colony['ants'].append(ant) 
 
     # Button to toggle text display
     button_rect = pygame.Rect(10, screen_height - 40, 100, 30)
@@ -241,21 +236,20 @@ def main():
     # Main loop
     running = True
     while running:
-        # Handle events
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-            # Dynamic speed control (optional)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
-                    simulation_speed += 0.1  # Increase speed
-                    # Update ants' speed
+                    simulation_speed += 0.1  
+                    
                     for ant in ants:
                         ant.speed = simulation_speed
                 elif event.key == pygame.K_MINUS or event.key == pygame.K_UNDERSCORE:
-                    simulation_speed = max(0.1, simulation_speed - 0.1)  # Decrease speed, minimum 0.1
-                    # Update ants' speed
+                    simulation_speed = max(0.1, simulation_speed - 0.1)  
+
                     for ant in ants:
                         ant.speed = simulation_speed
 
@@ -266,7 +260,7 @@ def main():
                 elif pheromone_button_rect.collidepoint(event.pos):
                     show_pheromones = not show_pheromones
 
-        # Update ants
+
         for ant in ants:
             colony_id = ant.colony['id']
             pheromone_map = pheromone_maps[colony_id]
@@ -309,7 +303,6 @@ def main():
             pheromone_map = np.maximum(pheromone_map, 0)
             pheromone_maps[idx] = pheromone_map
 
-        # Draw everything
         # Draw the background onto the screen
         screen.blit(background, (0, 0))
 
@@ -455,9 +448,6 @@ def diffuse_pheromones_gpu(pheromone_map, diffusion_rate=0.04):
     new_map_gpu = cp.maximum(new_map_gpu, 0)
     
     return cp.asnumpy(new_map_gpu)
-
-def diffuse_pheromones(pheromone_map, diffusion_rate=0.02):
-    return diffuse_pheromones_gpu(pheromone_map, diffusion_rate)
 
 def darken_color(color, factor=0.7):
     """Darken a color by a given factor."""
